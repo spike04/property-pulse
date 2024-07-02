@@ -3,8 +3,6 @@ import Property from '@/models/Property'
 import User from '@/models/User'
 import { getSessionUser } from '@/utils/getSessionUser'
 
-export const dynamic = 'force-dynamic'
-
 // GET /api/bookmarks
 export const GET = async (request) => {
   try {
