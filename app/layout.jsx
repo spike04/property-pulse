@@ -12,6 +12,8 @@ export const metadata = {
   description: 'Find your dream rental property',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default function RootLayout({ children }) {
   return (
     <GlobalProvider>
