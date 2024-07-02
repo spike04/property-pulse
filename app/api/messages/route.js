@@ -19,9 +19,20 @@ export const GET = async (request) => {
 
     const { userId } = sessionUser
 
-    const messages = await Message.find({ recipient: userId })
+    const readMessages = await Message.find({ recipient: userId, read: true })
+      .sort({ createdAt: -1 }) // Sort Messages in Ascending order
       .populate('sender', 'username')
       .populate('property', 'name')
+
+    const unReadMessages = await Message.find({
+      recipient: userId,
+      read: false,
+    })
+      .sort({ createdAt: -1 }) // Sort Messages in Ascending order
+      .populate('sender', 'username')
+      .populate('property', 'name')
+
+    const messages = [...unReadMessages, ...readMessages]
 
     return new Response(JSON.stringify(messages), { status: 200 })
   } catch (error) {

@@ -1,10 +1,13 @@
 'use client'
 
+import { useGlobalContext } from '@/context/GlobalContext'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 export default function MessageCard({ message }) {
+  const { setUnreadCount } = useGlobalContext()
   const [isRead, setIsRead] = useState(message.read)
+  const [isDeleted, setIsDeleted] = useState(false)
 
   useEffect(() => {}, [])
 
@@ -20,6 +23,8 @@ export default function MessageCard({ message }) {
         const { read } = await res.json()
         setIsRead(read)
 
+        setUnreadCount((prev) => (read ? prev - 1 : prev + 1))
+
         if (read) {
           toast.success('Marked as read')
         } else {
@@ -32,6 +37,29 @@ export default function MessageCard({ message }) {
     }
   }
 
+  const handleDeleteClicked = async (e) => {
+    e.preventDefault()
+
+    try {
+      const res = await fetch(`/api/messages/${message._id}`, {
+        method: 'DELETE',
+      })
+
+      if (res.status === 200) {
+        setUnreadCount((prev) => prev - 1)
+        setIsDeleted(true)
+
+        toast.success('Message deleted')
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error('Something went wrong')
+    }
+  }
+
+  if (isDeleted) {
+    return null
+  }
   return (
     <div className="relative bg-white p-4 rounded-md shadow-md border border-gray-200">
       {!isRead && (
@@ -75,7 +103,10 @@ export default function MessageCard({ message }) {
       >
         {isRead ? 'Mark As New' : 'Mark As Read'}
       </button>
-      <button className="mt-4 bg-red-500 text-white py-1 px-3 rounded-md">
+      <button
+        onClick={handleDeleteClicked}
+        className="mt-4 bg-red-500 text-white py-1 px-3 rounded-md"
+      >
         Delete
       </button>
     </div>

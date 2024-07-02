@@ -3,9 +3,9 @@ import PropertyCard from './PropertyCard'
 import Link from 'next/link'
 
 export default async function HomeProperties() {
-  const properties = await fetchProperties()
+  const data = await fetchProperties()
 
-  const recentProperties = properties
+  const recentProperties = data.properties
     .sort(() => Math.random() - Math.random())
     .slice(0, 3)
 
